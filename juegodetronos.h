@@ -1,0 +1,6 @@
+#ifndef JUEGODETRONOS_H
+#define JUEGODETRONOS_H
+
+
+
+#endif //JUEGODETRONOS_H
