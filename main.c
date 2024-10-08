@@ -1,8 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "juegodetronos.h"
+#include "abb.h"
 
 int main(){
     char option;
+    TABB tree;
+    crearAbb(&tree);
     do{
         printf("\033[1;35m");
         printf("\n--------------------------------------------------------");
@@ -17,10 +21,10 @@ int main(){
         scanf(" %c", &option);
         switch (option){
         case 'a': case 'A':
-            /* code */
+            anhadirPersonaje(&tree);
             break;
         case 'l': case 'L':
-            /* code */
+            listadoPersonajes(tree);
             break;
         case 'e': case 'E':
             /* code */
