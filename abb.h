@@ -12,7 +12,7 @@
 
 typedef char *TIPOCLAVE;
 
-typedef struct{
+typedef struct TELEMENTOABB{
     char name[MAX];
     char house[MAX];
     unsigned int royal;

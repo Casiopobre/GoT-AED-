@@ -3,10 +3,12 @@
 #include "juegodetronos.h"
 #include "abb.h"
 
-int main(){
+int main(int argc, char **argv){
     char option;
     TABB tree;
     crearAbb(&tree);
+    cargar_archivo(&tree, argc, argv);
+
     do{
         printf("\033[1;35m");
         printf("\n--------------------------------------------------------");
@@ -27,15 +29,17 @@ int main(){
             listadoPersonajes(tree);
             break;
         case 'e': case 'E':
-            /* code */
+            eliminarPersonaje(&tree);
             break;
         case 's': case 'S':
-            /* code */
+            // Liberamos a memoria
+            destruirAbb(&tree);
             break;
         default:
             printf("Opcion non valida :(");
             break;
         }
     } while(option != 's' && option != 'S');
+    
     return EXIT_SUCCESS;
 }

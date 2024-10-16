@@ -33,7 +33,9 @@ int _comparar_claves(TIPOCLAVE cl1, TIPOCLAVE cl2) {
  * destruirse ha de hacerse aqui. El uso de esta funcion
  * permite hacer mas eficiente la destruccion del arbol.*/
 void _destruir_elem(TIPOELEMENTOABB *E) {
-    free(&E);
+    destruirLista(&E->parents);
+    destruirLista(&E->siblings);
+    destruirLista(&E->killed);
 }
 
 /////////////////////////// FIN PARTE MODIFICABLE

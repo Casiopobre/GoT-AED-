@@ -5,8 +5,8 @@
 // Definir el struct y si es necesario definir constantes
 #define MAX 30
 
-typedef struct{
-    char nameP[MAX]
+typedef struct TELEMENTOLISTA{
+    char nameP[MAX];
 } TIPOELEMENTOLISTA;
 
 ///////////////////////////////////////////////////

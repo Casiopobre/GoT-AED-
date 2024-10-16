@@ -4,6 +4,7 @@
 #include <string.h>
 #include "abb.h"
 #include "lista.h"
+#define MAX 30
 
 void anhadirPersonaje(TABB *tree){
     TIPOELEMENTOABB character;
@@ -21,22 +22,27 @@ void anhadirPersonaje(TABB *tree){
     printf("\nIntroduza se o seu personaxe e ou non da realeza (0 = no; 1 = si): ");
     scanf("%d", &character.royal);
 
-    printf("\nIntroduza a lista dos nomes dos proxenitores do seu personaxe ('fin' para terminar): ");
-    do{
-        scanf(" %[^\n\r]", auxName);
-        insertarElementoLista(&character.parents, finLista(character.parents), auxName);
+        printf("\nIntroduza a lista dos nomes dos proxenitores do seu personaxe ('fin' para terminar): ");
+    do {
+        scanf(" %[^\n\r]", auxName.nameP);
+        if((strcmp(auxName.nameP, "fin") != 0))
+            insertarElementoLista(&character.parents, finLista(character.parents), auxName);
+
     } while (strcmp(auxName.nameP, "fin") != 0);
+
 
     printf("\nIntroduza a lista de irmans e irmas do seu personaxe ('fin' para terminar): ");
     do{
-        scanf(" %[^\n\r]", auxName);
-        insertarElementoLista(&character.siblings, finLista(character.siblings), auxName);
+        scanf(" %[^\n\r]", auxName.nameP);
+        if(strcmp(auxName.nameP, "fin") != 0)
+            insertarElementoLista(&character.siblings, finLista(character.siblings), auxName);
     } while (strcmp(auxName.nameP, "fin") != 0);
 
     printf("\nIntroduza a lista de persoas asasinadas polo seu personaxe ('fin' para terminar):");
     do{
-        scanf(" %[^\n\r]", auxName);
-        insertarElementoLista(&character.killed, finLista(character.killed), auxName);
+        scanf(" %[^\n\r]", auxName.nameP);
+        if(strcmp(auxName.nameP, "fin") != 0)
+            insertarElementoLista(&character.killed, finLista(character.killed), auxName);
     } while (strcmp(auxName.nameP, "fin") != 0);
 
     insertarElementoAbb(tree, character);
@@ -46,16 +52,10 @@ void _imprimirLista(TLISTA list){
     TIPOELEMENTOLISTA element;
     TPOSICION position = primeroLista(list);
 
-    // Comprobacion de que a lista non estea vacia
-    if(esListaVacia(list)){
-        perror("A lista está vacía :(\n");
-        return;
-    }
-
     // Recorremos a lista imprimindo os seus elementos
     while(position != finLista(list)){
         recuperarElementoLista(list, position, &element);
-        printf("%s, ", element);
+        printf("%s, ", element.nameP);
         position = siguienteLista(list, position);
     }
 }
@@ -73,6 +73,7 @@ void _imprimirPersonaje(TIPOELEMENTOABB character){
     _imprimirLista(character.siblings);
     printf("\n\tPersoas asasinadas: ");
     _imprimirLista(character.killed);
+    printf("\n");
 }
 
 void listadoPersonajes(TABB tree){
@@ -85,8 +86,26 @@ void listadoPersonajes(TABB tree){
     }
 }
 
-void eliminarPersonaje(TABB *tree){
-    char *name;
+void eliminarPersonaje(TABB *tree){ 
+    TIPOCLAVE name = malloc(sizeof(char) * MAX);
+    if(name == NULL){
+        perror("Erro reservando memoria para o nome\n");
+        return;
+    }
+    TIPOELEMENTOABB character;
+
     printf("\nInserte o nome do personaxe a eliminar: ");
     scanf(" %[^\n\r]", name);
+
+    buscarNodoAbb(*tree, name, &character);
+    if(esMiembroAbb(*tree, character))
+        suprimirElementoAbb(tree, character); // DA DOUBLE FREE AYUDA
+    else
+        printf("Personaxe non atopado\n");
+    
+    free(name);
+}
+
+void cargar_archivo(TABB *tree, int argc, char **argv){
+    
 }
