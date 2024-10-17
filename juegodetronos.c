@@ -5,6 +5,8 @@
 #include "abb.h"
 #include "lista.h"
 #define MAX 30
+#define BUF 512
+#define AUXMAX 256
 
 void anhadirPersonaje(TABB *tree){
     TIPOELEMENTOABB character;
@@ -106,6 +108,51 @@ void eliminarPersonaje(TABB *tree){
     free(name);
 }
 
+// Función auxiliar que toma unha cadea separada por comas e garda os seus elementos nunha lista
+void _procesarCadena(TLISTA *list, char string[AUXMAX]){
+    TIPOELEMENTOLISTA aux;
+    char *token = strtok(string, ",");
+    while(token != NULL){
+        //printf("%s ", token);
+        strcpy(aux.nameP, token);
+        insertarElementoLista(list, finLista(*list), aux);
+        token = strtok(NULL, ",");
+    }
+}
+
 void cargar_archivo(TABB *tree, int argc, char **argv){
-    
+    // Comprobación de que haxa 3 argumentos
+    if(argc < 3){
+        printf("Numero de argumentos menor que 3. Traballando sen arquivo...\n");
+        return;
+    }
+    // Comprobción de que o modo introducido é correcto
+    if(strcmp("-f", argv[1]) != 0){
+        printf("Modo introducido incorrecto. Por favor, introduza -f se quere traballar cun arquivo.\n");
+        exit(EXIT_FAILURE);
+    }
+    // Comprobación de que o arquivo se abre correctamente
+    FILE* file = fopen(argv[2], "r");
+    if(file == NULL){
+        perror("Erro ao abrir o arquivo.\n");
+        exit(EXIT_FAILURE);
+    }
+    // Lemos o arquivo e gardamos os datos
+    char buffer[BUF];
+    TIPOELEMENTOABB character;
+    char auxParents[AUXMAX], auxSiblings[AUXMAX], auxKilled[AUXMAX];
+    fseek(file, 0, SEEK_SET);
+    while(fgets(buffer, sizeof(buffer), file) != NULL){
+        sscanf(buffer, "%[^|]|%[^|]|%d|%[^|]|%[^|]|%[^|]|\n", character.name, character.house, &character.royal, auxParents, auxSiblings, auxKilled);
+        // Gardamos os elementos das listas
+        crearLista(&character.parents);
+        crearLista(&character.siblings);
+        crearLista(&character.killed);
+        _procesarCadena(&character.parents, auxParents);
+        _procesarCadena(&character.siblings, auxSiblings);
+        _procesarCadena(&character.killed, auxKilled);
+        // Añadimos o personaxe á árbore
+        insertarElementoAbb(tree, character);
+    }
+    fclose(file);    
 }
