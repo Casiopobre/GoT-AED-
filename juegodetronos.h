@@ -22,11 +22,11 @@ void listadoPersonajes(TABB tree);
 void eliminarPersonaje(TABB *tree);
 
 /*
-* Funcion que crea la base de datos deste un archivo
+* Funcion que crea a base de datos dende un arquivo. Devolve 1 se se lle introduce un arquivo, e 0 en caso contrario
 * @param *tree Punteiro a arbore na que imos a gardar os personaxes
 * @param argc Número de argumentos recibidos polo main
 * @param **argv Vector de strings cos argumentos recibidos polo main
 */
-void cargar_archivo(TABB *tree, int argc, char **argv);
+int cargarArchivo(TABB *tree, int argc, char **argv);
 
 #endif //JUEGODETRONOS_H

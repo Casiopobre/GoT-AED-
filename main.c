@@ -7,7 +7,7 @@ int main(int argc, char **argv){
     char option;
     TABB tree;
     crearAbb(&tree);
-    cargar_archivo(&tree, argc, argv);
+    cargarArchivo(&tree, argc, argv);
 
     do{
         printf("\033[1;35m");

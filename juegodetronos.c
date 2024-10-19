@@ -7,6 +7,7 @@
 #define MAX 30
 #define BUF 512
 #define AUXMAX 256
+char characterCounter = 0; // Variable global para levar a conta do numero de personaxes da base de datos
 
 void anhadirPersonaje(TABB *tree){
     TIPOELEMENTOABB character;
@@ -63,6 +64,7 @@ void _imprimirLista(TLISTA list){
 }
 
 void _imprimirPersonaje(TIPOELEMENTOABB character){
+    characterCounter++;
     printf("%s\n", character.name);
     printf("\tCasa: %s\n", character.house);
     if(character.royal)
@@ -113,18 +115,19 @@ void _procesarCadena(TLISTA *list, char string[AUXMAX]){
     TIPOELEMENTOLISTA aux;
     char *token = strtok(string, ",");
     while(token != NULL){
-        //printf("%s ", token);
-        strcpy(aux.nameP, token);
-        insertarElementoLista(list, finLista(*list), aux);
+        if(strcmp(token, "-") != 0){
+            strcpy(aux.nameP, token);
+            insertarElementoLista(list, finLista(*list), aux);
+        }
         token = strtok(NULL, ",");
     }
 }
 
-void cargar_archivo(TABB *tree, int argc, char **argv){
+int cargarArchivo(TABB *tree, int argc, char **argv){
     // Comprobación de que haxa 3 argumentos
     if(argc < 3){
         printf("Numero de argumentos menor que 3. Traballando sen arquivo...\n");
-        return;
+        return 0;
     }
     // Comprobción de que o modo introducido é correcto
     if(strcmp("-f", argv[1]) != 0){
@@ -151,8 +154,26 @@ void cargar_archivo(TABB *tree, int argc, char **argv){
         _procesarCadena(&character.parents, auxParents);
         _procesarCadena(&character.siblings, auxSiblings);
         _procesarCadena(&character.killed, auxKilled);
-        // Añadimos o personaxe á árbore
+        // Engadimos o personaxe á árbore
         insertarElementoAbb(tree, character);
     }
-    fclose(file);    
+    fclose(file);  
+    return 1;  
+}
+
+void guardarDatos(TABB tree, int argc, char **argv){
+    FILE *file;
+    char *fileName;
+    TIPOELEMENTOABB character;
+    if(cargarArchivo(&tree, argc, argv)){
+        printf("Actualizando o arquivo inicial...");
+        file = fopen(argv[2], "w");
+    } else{
+        printf("Introduza o nome co que quere gardar o arquivo de personaxes: \n");
+        scanf(" %[^\n\r]", fileName);
+        file = fopen(fileName, "w");
+    }
+    for(int i = 0; i < characterCounter; i++){
+        // Imprimir os personaxes no arquivo (funcións auxiliares(?))
+    }
 }
