@@ -27,6 +27,15 @@ void eliminarPersonaje(TABB *tree);
 * @param argc Número de argumentos recibidos polo main
 * @param **argv Vector de strings cos argumentos recibidos polo main
 */
-int cargarArchivo(TABB *tree, int argc, char **argv);
+void cargarArchivo(TABB *tree, int argc, char **argv);
+
+/*
+* Funcion que garda os datos nun ficheiro
+* @param *tree Punteiro a arbore na que imos a gardar os personaxes
+* @param argc Número de argumentos recibidos polo main
+* @param **argv Vector de strings cos argumentos recibidos polo main
+*/
+void guardarDatos(TABB tree, int argc, char **argv);
+
 
 #endif //JUEGODETRONOS_H

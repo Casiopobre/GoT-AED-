@@ -8,7 +8,7 @@ int main(int argc, char **argv){
     TABB tree;
     crearAbb(&tree);
     cargarArchivo(&tree, argc, argv);
-
+    
     do{
         printf("\033[1;35m");
         printf("\n--------------------------------------------------------");
@@ -32,6 +32,8 @@ int main(int argc, char **argv){
             eliminarPersonaje(&tree);
             break;
         case 's': case 'S':
+            // Gardamos os datos nun arquivo
+            guardarDatos(tree, argc, argv);
             // Liberamos a memoria
             destruirAbb(&tree);
             break;

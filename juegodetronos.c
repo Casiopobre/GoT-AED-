@@ -4,9 +4,9 @@
 #include <string.h>
 #include "abb.h"
 #include "lista.h"
-#define MAX 30
-#define BUF 512
-#define AUXMAX 256
+#define MAX 30 // Tamaño maximo do nome dun personaxe
+#define BUF 512 // Tamaño do buffer para ler cada liña do arquivo
+#define AUXMAX 256 // Tamaño maximo da informacion de casa lista
 char characterCounter = 0; // Variable global para levar a conta do numero de personaxes da base de datos
 
 void anhadirPersonaje(TABB *tree){
@@ -123,11 +123,11 @@ void _procesarCadena(TLISTA *list, char string[AUXMAX]){
     }
 }
 
-int cargarArchivo(TABB *tree, int argc, char **argv){
+void cargarArchivo(TABB *tree, int argc, char **argv){
     // Comprobación de que haxa 3 argumentos
     if(argc < 3){
         printf("Numero de argumentos menor que 3. Traballando sen arquivo...\n");
-        return 0;
+        return;
     }
     // Comprobción de que o modo introducido é correcto
     if(strcmp("-f", argv[1]) != 0){
@@ -158,22 +158,67 @@ int cargarArchivo(TABB *tree, int argc, char **argv){
         insertarElementoAbb(tree, character);
     }
     fclose(file);  
-    return 1;  
+}
+
+void _imprimirListaArquivo(TLISTA list, FILE* file){
+    TPOSICION pos = primeroLista(list);
+    TIPOELEMENTOLISTA name;
+    while(pos != finLista(list)){
+        if(pos!=primeroLista(list)){
+            fprintf(file, ",");
+        }
+        recuperarElementoLista(list, pos, &name);
+        fprintf(file, "%s", name.nameP);
+        pos = siguienteLista(list, pos);
+    }
+}
+
+void _imprimirPersonaxeArquivo(TABB tree, FILE* file){
+    TIPOELEMENTOABB character;
+    if(!esAbbVacio(tree)){
+        
+        _imprimirPersonaxeArquivo(izqAbb(tree), file);
+        _imprimirPersonaxeArquivo(derAbb(tree), file);
+
+        leerElementoAbb(tree, &character);
+        
+        fprintf(file, "%s|%s|%d|", character.name, character.house, character.royal);
+        if(esListaVacia(character.parents))
+            fprintf(file, "-");
+        else
+            _imprimirListaArquivo(character.parents, file);
+        fprintf(file, "|");
+        if(esListaVacia(character.siblings))
+            fprintf(file, "-");
+        else
+            _imprimirListaArquivo(character.siblings, file);
+        fprintf(file, "|");
+        if(esListaVacia(character.killed))
+            fprintf(file, "-");
+        else
+            _imprimirListaArquivo(character.killed, file);
+        fprintf(file, "|\n");
+    }
 }
 
 void guardarDatos(TABB tree, int argc, char **argv){
     FILE *file;
-    char *fileName;
-    TIPOELEMENTOABB character;
-    if(cargarArchivo(&tree, argc, argv)){
-        printf("Actualizando o arquivo inicial...");
+    char fileName[MAX];
+
+    if(argc>=3){
+        printf("Actualizando o arquivo inicial...\n");
         file = fopen(argv[2], "w");
     } else{
         printf("Introduza o nome co que quere gardar o arquivo de personaxes: \n");
         scanf(" %[^\n\r]", fileName);
         file = fopen(fileName, "w");
     }
-    for(int i = 0; i < characterCounter; i++){
-        // Imprimir os personaxes no arquivo (funcións auxiliares(?))
+    if(file == NULL){
+        perror("Erro na apertura do arquivo. \n");
+        exit(EXIT_FAILURE);
     }
+
+    _imprimirPersonaxeArquivo(tree, file);
+    fclose(file);
+    printf("Arquivo creado/actualizado con éxito :)\n");
 }
