@@ -16,6 +16,8 @@ int main(int argc, char **argv){
         printf("\na) Engadir personaxe\n");
         printf("\nl) Listado alfabetico de personaxes\n");
         printf("\ne) Eliminar personaxe\n");
+        printf("\nb) Buscar asasino/a(s)\n");
+        printf("\nh) Buscar fillo/a(s)\n");
         printf("\ns) Saír\n");
         printf("--------------------------------------------------------\n");
         printf("\033[1;0m");
@@ -30,6 +32,12 @@ int main(int argc, char **argv){
             break;
         case 'e': case 'E':
             eliminarPersonaje(&tree);
+            break;
+        case 'b': case 'B':
+            buscarAsesino(tree);
+            break;
+        case 'h': case 'H':
+            buscarHijos(tree);
             break;
         case 's': case 'S':
             // Gardamos os datos nun arquivo

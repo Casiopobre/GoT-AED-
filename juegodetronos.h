@@ -37,5 +37,16 @@ void cargarArchivo(TABB *tree, int argc, char **argv);
 */
 void guardarDatos(TABB tree, int argc, char **argv);
 
+/*
+* Funcion que busca o asasino un personaxe na base de datos
+* @param tree Arbore na que imos a buscar o asasino
+*/
+void buscarAsesino(TABB tree);
+
+/*
+* Funcion que busca os fillos dun personaxe na base de datos
+* @param tree Arbore na que imos a buscar os fillos
+*/
+void buscarHijos(TABB tree);
 
 #endif //JUEGODETRONOS_H

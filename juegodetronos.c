@@ -103,7 +103,7 @@ void eliminarPersonaje(TABB *tree){
 
     buscarNodoAbb(*tree, name, &character);
     if(esMiembroAbb(*tree, character))
-        suprimirElementoAbb(tree, character); // DA DOUBLE FREE AYUDA
+        suprimirElementoAbb(tree, character);
     else
         printf("Personaxe non atopado\n");
     
@@ -221,4 +221,86 @@ void guardarDatos(TABB tree, int argc, char **argv){
     _imprimirPersonaxeArquivo(tree, file);
     fclose(file);
     printf("Arquivo creado/actualizado con éxito :)\n");
+}
+
+void _auxFindMurderer(TABB tree, char *murderedChar, char (*murdererArray)[MAX], int *arrayPos){
+    TIPOELEMENTOABB character;
+    TIPOELEMENTOLISTA auxChar;
+    // Recorremos a arbore
+    if(!esAbbVacio(tree)){
+        _auxFindMurderer(izqAbb(tree), murderedChar, murdererArray, arrayPos);
+        leerElementoAbb(tree, &character);
+        TPOSICION pos = primeroLista(character.killed);
+        while(pos != finLista(character.killed)){
+            recuperarElementoLista(character.killed, pos, &auxChar);
+            if(strcmp(auxChar.nameP, murderedChar) == 0){
+                strcpy(murdererArray[*arrayPos], character.name);
+                (*arrayPos)++;
+            }
+            pos = siguienteLista(character.killed, pos);
+        }
+        _auxFindMurderer(derAbb(tree), murderedChar, murdererArray, arrayPos);
+    }
+}
+
+void buscarAsesino(TABB tree){
+    char murderedChar[MAX];
+    char murdererArray[MAX][MAX];
+    int arrayPos = 0;
+
+    printf("Introduza o nome do personaxe do que quere atopar o(s) asesino(s): \n");
+    scanf(" %[^\n\r]", murderedChar);
+
+    _auxFindMurderer(tree, murderedChar, murdererArray, &arrayPos);
+
+    // Imprimimos a array de asasinos
+    if(arrayPos == 0){
+        printf("Non se atoparon asasinos para %s\n", murderedChar);
+        return;
+    }
+    printf("Asasino(s) de %s: ", murderedChar);
+    for(int i = 0; i < arrayPos; i++){
+        printf("%s, ", murdererArray[i]);
+    }
+}
+
+void _auxFindParent(TABB tree, char *parent, char (*childArray)[MAX], int *arrayPos){
+    TIPOELEMENTOABB character;
+    TIPOELEMENTOLISTA auxChar;
+    // Recorremos a arbore
+    if(!esAbbVacio(tree)){
+        _auxFindMurderer(izqAbb(tree), parent, childArray, arrayPos);
+        leerElementoAbb(tree, &character);
+        TPOSICION pos = primeroLista(character.parents);
+        while(pos != finLista(character.parents)){
+            recuperarElementoLista(character.parents, pos, &auxChar);
+            if(strcmp(auxChar.nameP, parent) == 0){
+                strcpy(childArray[*arrayPos], character.name);
+                (*arrayPos)++;
+            }
+            pos = siguienteLista(character.parents, pos);
+        }
+        _auxFindMurderer(derAbb(tree), parent, childArray, arrayPos);
+    }
+}
+// ARREGLAR: NON ATOPA OS FILLOS CCORRECTAMENTE (CATELYN STARK APARECE COMO QUE NN TEN FILLOS)
+void buscarHijos(TABB tree){
+    char parent[MAX];
+    char childArray[MAX][MAX];
+    int arrayPos = 0;
+
+    printf("Introduza o nome do personaxe do que quere atopar o(s) fillo/a(s): \n");
+    scanf(" %[^\n\r]", parent);
+
+    _auxFindParent(tree, parent, childArray, &arrayPos);
+
+    // Imprimimos a array de asasinos
+    if(arrayPos == 0){
+        printf("Non se atoparon fillos/as para %s\n", parent);
+        return;
+    }
+    printf("Fillo/a(s) de %s: ", parent);
+    for(int i = 0; i < arrayPos; i++){
+        printf("%s, ", childArray[i]);
+    }
 }
