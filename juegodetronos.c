@@ -7,7 +7,6 @@
 #define MAX 30 // Tamaño maximo do nome dun personaxe
 #define BUF 512 // Tamaño do buffer para ler cada liña do arquivo
 #define AUXMAX 256 // Tamaño maximo da informacion de casa lista
-char characterCounter = 0; // Variable global para levar a conta do numero de personaxes da base de datos
 
 void anhadirPersonaje(TABB *tree){
     TIPOELEMENTOABB character;
@@ -64,7 +63,6 @@ void _imprimirLista(TLISTA list){
 }
 
 void _imprimirPersonaje(TIPOELEMENTOABB character){
-    characterCounter++;
     printf("%s\n", character.name);
     printf("\tCasa: %s\n", character.house);
     if(character.royal)
@@ -269,9 +267,10 @@ void _auxFindParent(TABB tree, char *parent, char (*childArray)[MAX], int *array
     TIPOELEMENTOLISTA auxChar;
     // Recorremos a arbore
     if(!esAbbVacio(tree)){
-        _auxFindMurderer(izqAbb(tree), parent, childArray, arrayPos);
+        _auxFindParent(izqAbb(tree), parent, childArray, arrayPos);
         leerElementoAbb(tree, &character);
-        TPOSICION pos = primeroLista(character.parents);
+        // Recorremos a lista de pais do personaxe
+        TPOSICION pos = primeroLista(character.parents); 
         while(pos != finLista(character.parents)){
             recuperarElementoLista(character.parents, pos, &auxChar);
             if(strcmp(auxChar.nameP, parent) == 0){
@@ -280,10 +279,10 @@ void _auxFindParent(TABB tree, char *parent, char (*childArray)[MAX], int *array
             }
             pos = siguienteLista(character.parents, pos);
         }
-        _auxFindMurderer(derAbb(tree), parent, childArray, arrayPos);
+        _auxFindParent(derAbb(tree), parent, childArray, arrayPos);
     }
 }
-// ARREGLAR: NON ATOPA OS FILLOS CCORRECTAMENTE (CATELYN STARK APARECE COMO QUE NN TEN FILLOS)
+
 void buscarHijos(TABB tree){
     char parent[MAX];
     char childArray[MAX][MAX];
@@ -302,5 +301,56 @@ void buscarHijos(TABB tree){
     printf("Fillo/a(s) de %s: ", parent);
     for(int i = 0; i < arrayPos; i++){
         printf("%s, ", childArray[i]);
+    }
+}
+
+int _countMurdered(TLISTA list){
+    if(!esListaVacia(list)){
+        int n = longitudLista(list);
+        return n;
+    }
+    return 0;
+}
+
+int _auxMaxKills(TABB tree, int *maxMurdered){
+    TIPOELEMENTOABB character;
+    int auxMaxMurdered;
+    if(!esAbbVacio(tree)){
+        _auxMaxKills(izqAbb(tree), maxMurdered);
+        leerElementoAbb(tree, &character);
+        auxMaxMurdered = _countMurdered(character.killed);
+        if(auxMaxMurdered > *maxMurdered){
+            *maxMurdered = auxMaxMurdered;
+        }
+        _auxMaxKills(derAbb(tree), maxMurdered);
+    }
+    return *maxMurdered;
+}
+
+void _auxKillers(TABB tree, char (*killerArray)[MAX], int maxKills, int *counter){
+    TIPOELEMENTOABB character;
+    if(!esAbbVacio(tree)){
+        _auxKillers(izqAbb(tree), killerArray, maxKills, counter);
+        leerElementoAbb(tree, &character);
+        if(maxKills == _countMurdered(character.killed)){
+            strcpy(killerArray[*counter], character.name);
+            (*counter)++;
+        }
+        _auxKillers(derAbb(tree), killerArray, maxKills, counter);
+
+    }
+}
+
+void buscarKiller(TABB tree){
+    int maxMurdered = 0;
+    char killerArray[MAX][MAX];
+    int counter = 0;
+
+    int maxKills = _auxMaxKills(tree, &maxMurdered);
+    _auxKillers(tree, killerArray, maxKills, &counter);
+
+    printf("O(s) personaxe(s) con mais asasinatos (%d baixas confirmadas) e/son: ", maxKills);
+    for(int i = 0; i < counter; i++){
+        printf("%s, ", killerArray[i]);
     }
 }

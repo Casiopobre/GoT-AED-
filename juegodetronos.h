@@ -49,4 +49,10 @@ void buscarAsesino(TABB tree);
 */
 void buscarHijos(TABB tree);
 
+/*
+* Funcion que busca o personaxe con mais asasinatos
+* @param tree Arbore na que temos a base de datos
+*/
+void buscarKiller(TABB tree);
+
 #endif //JUEGODETRONOS_H
