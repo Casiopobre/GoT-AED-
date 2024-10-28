@@ -55,4 +55,10 @@ void buscarHijos(TABB tree);
 */
 void buscarKiller(TABB tree);
 
+/*
+* Funcion que modifica un personaxe da base de datos
+* @param *tree Punteiro a arbore na que temos a base de datos
+*/
+void modificarPersonaje(TABB *tree);
+
 #endif //JUEGODETRONOS_H

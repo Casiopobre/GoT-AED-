@@ -354,3 +354,113 @@ void buscarKiller(TABB tree){
         printf("%s, ", killerArray[i]);
     }
 }
+
+
+/*
+void _auxCopyList(TLISTA list1, TLISTA list2){
+    TIPOELEMENTOLISTA element;
+    TPOSICION pos1 = primeroLista(list1);
+    TPOSICION pos2 = primeroLista(list2);
+    while(pos1 != finLista(list1)){
+        recuperarElementoLista(list1, pos1, &element);
+        insertarElementoLista(&list2, pos2, element);
+        pos1 = siguienteLista(list1, pos1);
+        pos2 = siguienteLista(list2, pos2);
+    }
+}
+*/
+
+void modificarPersonaje(TABB *tree){
+    TIPOCLAVE modifiedChar = malloc(sizeof(char) * MAX);
+    if(modifiedChar == NULL){
+        perror("Erro reservando memoria para o nome\n");
+        return;
+    }
+    TIPOELEMENTOABB character, auxChar;
+    char option;
+    TIPOELEMENTOLISTA auxName;
+
+    printf("\nInserte o nome do personaxe a modificar: ");
+    scanf(" %[^\n\r]", modifiedChar);
+
+    buscarNodoAbb(*tree, modifiedChar, &character);
+
+    if(esMiembroAbb(*tree, character)){
+        do{
+            printf("\033[1;35m");
+            printf("\n--------------------------------------------------------");
+            printf("\n~*~*~*~*~*~ Seleccione un campo para modificar: ~*~*~*~*~*~\n");
+            printf("\nn) Nome\n");
+            printf("\nc) Casa\n");
+            printf("\nr) Realeza\n");
+            printf("\np) Proxenitores\n");
+            printf("\ni) Irmans/irmas\n");
+            printf("\na) Persoas asasinadas\n");
+            printf("\ns) Saír\n");
+            printf("--------------------------------------------------------\n");
+            printf("\033[1;0m");
+            printf("\nOpcion:");
+            scanf(" %c", &option);
+            switch (option){
+            case 'n': case 'N':
+                printf("\nIntroduce o novo nome do personaxe: ");
+                scanf(" %[^\n\r]", character.name);
+                buscarNodoAbb(*tree, modifiedChar, &auxChar);
+                crearLista(&auxChar.parents);
+                crearLista(&auxChar.siblings);
+                crearLista(&auxChar.killed);
+                modificarElementoAbb(*tree, auxChar);
+                suprimirElementoAbb(tree, auxChar);
+                insertarElementoAbb(tree, character);
+                break;
+            case 'c': case 'C':
+                printf("\nIntroduce a nova casa do personaxe: ");
+                scanf(" %[^\n\r]", character.house);
+                break;
+            case 'r': case 'R':
+                printf("\nIntroduce o novo status de realeza do personaxe (0 = non; 1 = si): ");
+                scanf(" %d", &character.royal);
+                break;
+            case 'p': case 'P':
+                destruirLista(&character.parents);
+                crearLista(&character.parents);
+                printf("\nIntroduza a lista dos nomes dos novos proxenitores do seu personaxe ('fin' para terminar): ");
+                do {
+                    scanf(" %[^\n\r]", auxName.nameP);
+                    if((strcmp(auxName.nameP, "fin") != 0))
+                        insertarElementoLista(&character.parents, finLista(character.parents), auxName);
+                } while (strcmp(auxName.nameP, "fin") != 0);
+                break;
+            case 'i': case 'I':
+                destruirLista(&character.siblings);
+                crearLista(&character.siblings);
+                printf("\nIntroduza a lista dos novos irmans e irmas do seu personaxe ('fin' para terminar): ");
+                do{
+                    scanf(" %[^\n\r]", auxName.nameP);
+                    if(strcmp(auxName.nameP, "fin") != 0)
+                        insertarElementoLista(&character.siblings, finLista(character.siblings), auxName);
+                } while (strcmp(auxName.nameP, "fin") != 0);
+                break;
+            case 'a': case 'A':
+                destruirLista(&character.killed);
+                crearLista(&character.killed);
+                printf("\nIntroduza a nova lista de persoas asasinadas polo seu personaxe ('fin' para terminar):");
+                do{
+                    scanf(" %[^\n\r]", auxName.nameP);
+                    if(strcmp(auxName.nameP, "fin") != 0)
+                        insertarElementoLista(&character.killed, finLista(character.killed), auxName);
+                } while (strcmp(auxName.nameP, "fin") != 0);
+                break;
+            case 's': case 'S':
+                return;
+                break;
+            default:
+                printf("Opción non valida\n");
+                break;
+            }
+        } while(option != 's');
+    } else
+        printf("Personaxe non atopado\n");
+    
+    free(modifiedChar);
+}
