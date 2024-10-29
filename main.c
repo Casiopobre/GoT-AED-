@@ -6,6 +6,7 @@
 int main(int argc, char **argv){
     char option;
     TABB tree;
+    // Creamos a arbore
     crearAbb(&tree);
     cargarArchivo(&tree, argc, argv);
     
